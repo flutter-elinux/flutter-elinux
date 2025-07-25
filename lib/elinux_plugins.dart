@@ -159,11 +159,11 @@ Future<String> _createEntrypoint(FlutterProject project, String targetFile) asyn
   if (!eLinuxProject.existsSync()) {
     return targetFile;
   }
-
   final File entrypoint = eLinuxProject.managedDirectory.childFile('main.dart')
     ..createSync(recursive: true);
+  final File packageConfigFile = findPackageConfigFileOrDefault(project.directory);
   final PackageConfig packageConfig = await loadPackageConfigWithLogging(
-    project.directory.childFile('.packages'),
+    packageConfigFile,
     logger: globals.logger,
   );
   final FlutterProject flutterProject = FlutterProject.current();
