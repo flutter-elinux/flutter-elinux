@@ -406,9 +406,9 @@ Future<List<ELinuxPlugin>> findELinuxPlugins(
   bool throwOnError = true,
 }) async {
   final List<ELinuxPlugin> plugins = <ELinuxPlugin>[];
-  final File packagesFile = project.directory.childFile('.packages');
+  final File packageConfigFile = findPackageConfigFileOrDefault(project.directory);
   final PackageConfig packageConfig = await loadPackageConfigWithLogging(
-    packagesFile,
+    packageConfigFile,
     logger: globals.logger,
     throwOnError: throwOnError,
   );
