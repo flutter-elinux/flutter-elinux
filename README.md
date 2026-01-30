@@ -1,15 +1,15 @@
 # Flutter for Embedded Linux (eLinux)
 ![flutter-elinux](doc/images/overview.png)
 
-[![Analysis](https://github.com/sony/flutter-elinux/actions/workflows/analysis.yml/badge.svg)](https://github.com/sony/flutter-elinux/actions/workflows/analysis.yml)
+[![Analysis](https://github.com/flutter-elinux/flutter-elinux/actions/workflows/analysis.yml/badge.svg)](https://github.com/flutter-elinux/flutter-elinux/actions/workflows/analysis.yml)
 
-This software is a **non-official** extension to the [Flutter SDK](https://github.com/flutter/flutter) to build and debug Flutter apps for Embedded Linux devices using [flutter-embedded-linux](https://github.com/sony/flutter-embedded-linux), which is the flutter embedder for eLinux.
+This software is a **non-official** extension to the [Flutter SDK](https://github.com/flutter/flutter) to build and debug Flutter apps for Embedded Linux devices using [flutter-embedded-linux](https://github.com/flutter-elinux/flutter-embedded-linux), which is the flutter embedder for eLinux.
 
 ### Repositories
 
-- [flutter-elinux-plugins](https://github.com/sony/flutter-elinux-plugins): Flutter plugins for eLinux
-- [flutter-embedded-linux](https://github.com/sony/flutter-embedded-linux): eLinux embedding for Flutter
-- [meta-flutter](https://github.com/sony/meta-flutter): Yocto recipes of eLinux embedding for Flutter
+- [flutter-elinux-plugins](https://github.com/flutter-elinux/flutter-elinux-plugins): Flutter plugins for eLinux
+- [flutter-embedded-linux](https://github.com/flutter-elinux/flutter-embedded-linux): eLinux embedding for Flutter
+- [meta-flutter](https://github.com/flutter-elinux/meta-flutter): Yocto recipes of eLinux embedding for Flutter
 
 ### Contributing
 Welcome to this project. We welcome all your contribution and feedback. See: [CONTRIBUTING.md](CONTRIBUTING.md).
@@ -34,18 +34,18 @@ Welcome to this project. We welcome all your contribution and feedback. See: [CO
 - API compatibility with Flutter desktop for Windows and GLFW
   - APIs such as MethodChannel and EventChannel are completely the same with them
 
-If you want to know more details, see also [flutter-embedded-linux](https://github.com/sony/flutter-embedded-linux).
+If you want to know more details, see also [flutter-embedded-linux](https://github.com/flutter-elinux/flutter-embedded-linux).
 
 ## Plugins
-Flutter plugins for eLinux such as video_player and camera can be found at [flutter-elinux-plugins](https://github.com/sony/flutter-elinux-plugins).
+Flutter plugins for eLinux such as video_player and camera can be found at [flutter-elinux-plugins](https://github.com/flutter-elinux/flutter-elinux-plugins).
 
 ## User documentation
-User documentation including quick start guides can be found at [Wiki](https://github.com/sony/flutter-elinux/wiki).
+User documentation including quick start guides can be found at [Wiki](https://github.com/flutter-elinux/flutter-elinux/wiki).
 
 ## Quick start
 ### Install flutter-elinux
 ```Shell
-$ git clone https://github.com/sony/flutter-elinux.git
+$ git clone https://github.com/flutter-elinux/flutter-elinux.git
 $ sudo mv flutter-elinux /opt/
 $ export PATH=$PATH:/opt/flutter-elinux/bin
 ```
@@ -83,4 +83,7 @@ $ flutter-elinux run -d elinux-x11
 ```
 
 ## Forked from flutter-tizen
+
 This software was created by branching from [flutter-tizen](https://github.com/flutter-tizen/flutter-tizen) (branched from [this version](https://github.com/flutter-tizen/flutter-tizen/commit/ed128233c0bce33c77dd0df69afa59f0888d2d00)). Special thanks to the flutter-tizen team.
+
+This repository was previously hosted on [sony/flutter-elinux](https://github.com/sony/flutter-elinux). Thanks to sony for creating this fork and maintaining it for 4 years.
