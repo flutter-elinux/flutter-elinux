@@ -19,9 +19,11 @@ import 'package:flutter_tools/src/build_system/targets/android.dart';
 import 'package:flutter_tools/src/build_system/targets/assets.dart';
 import 'package:flutter_tools/src/build_system/targets/common.dart';
 import 'package:flutter_tools/src/build_system/targets/icon_tree_shaker.dart';
+import 'package:flutter_tools/src/build_system/targets/native_assets.dart';
 import 'package:flutter_tools/src/cache.dart';
 import 'package:flutter_tools/src/cmake.dart';
 import 'package:flutter_tools/src/globals.dart' as globals;
+import 'package:flutter_tools/src/isolated/native_assets/dart_hook_result.dart';
 import 'package:flutter_tools/src/project.dart';
 
 import 'elinux_builder.dart';
@@ -84,9 +86,11 @@ abstract class ELinuxAssetBundle extends Target {
     }
     final TargetPlatform tp =
         buildInfo.targetArch == 'arm64' ? TargetPlatform.linux_arm64 : TargetPlatform.linux_x64;
+    final DartHooksResult dartHookResult = await DartBuild.loadHookResult(environment);
     final Depfile assetDepfile = await copyAssets(
       environment,
       outputDirectory,
+      dartHookResult: dartHookResult,
       targetPlatform: tp,
       buildMode: buildMode,
       flavor: environment.defines[kFlavor],
