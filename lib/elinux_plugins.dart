@@ -236,34 +236,10 @@ Future<void> refreshELinuxPluginsList(FlutterProject project) async {
   final List<ELinuxPlugin> plugins = await findELinuxPlugins(project);
   // Sort the plugins by name to keep ordering stable in generated files.
   plugins.sort((ELinuxPlugin left, ELinuxPlugin right) => left.name.compareTo(right.name));
-  // TODO(franciscojma): Remove once migration is complete.
-  // Write the legacy plugin files to avoid breaking existing apps.
-  final bool legacyChanged = _writeELinuxFlutterPluginsListLegacy(project, plugins);
-
   final bool changed = await _writeELinuxFlutterPluginsList(project, plugins);
-  if (changed || legacyChanged) {
+  if (changed) {
     createPluginSymlinks(project, force: true);
   }
-}
-
-/// See: [_writeFlutterPluginsListLegacy] in `flutter_plugins.dart`
-bool _writeELinuxFlutterPluginsListLegacy(FlutterProject project, List<ELinuxPlugin> plugins) {
-  final File pluginsFile = project.flutterPluginsFile;
-  if (plugins.isEmpty) {
-    return ErrorHandlingFileSystem.deleteIfExists(pluginsFile);
-  }
-
-  const String info = 'This is a generated file; do not edit or check into version control.';
-  final StringBuffer flutterPluginsBuffer = StringBuffer('# $info\n');
-
-  for (final ELinuxPlugin plugin in plugins) {
-    flutterPluginsBuffer.write('${plugin.name}=${globals.fsUtils.escapePath(plugin.path)}\n');
-  }
-  final String? oldPluginFileContent = _readFileContent(pluginsFile);
-  final String pluginFileContent = flutterPluginsBuffer.toString();
-  pluginsFile.writeAsStringSync(pluginFileContent, flush: true);
-
-  return oldPluginFileContent != _readFileContent(pluginsFile);
 }
 
 // Key strings for the .flutter-plugins-dependencies file.
