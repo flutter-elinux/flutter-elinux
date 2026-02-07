@@ -404,6 +404,14 @@ class NativeBundle {
         environment.outputDir.childDirectory('flutter_assets'),
         flutterAssetsDir,
       );
+
+      // Copy NativeAssetsManifest.json so the engine can resolve @Native FFI symbols at runtime.
+      final File nativeAssetsFile = environment.buildDir.childFile('native_assets.json');
+      if (nativeAssetsFile.existsSync()) {
+        nativeAssetsFile.copySync(
+          flutterAssetsDir.childFile('NativeAssetsManifest.json').path,
+        );
+      }
     }
 
     // Copy native code assets from build hooks to the bundle's lib directory.
