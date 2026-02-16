@@ -28,7 +28,7 @@ import 'vscode_helper.dart';
 
 /// eLinux device implementation.
 ///
-/// See: [DesktopDevice] in `desktop_device.dart`
+/// See: [DesktopDevice] in flutter `packages/flutter_tools/lib/src/desktop_device.dart`
 class ELinuxDevice extends Device {
   ELinuxDevice(
     super.id, {
@@ -355,6 +355,9 @@ class ELinuxDevice extends Device {
 
     addFlag('enable-dart-profiling=true');
 
+    if (debuggingOptions.profileStartup) {
+      addFlag('profile-startup=true');
+    }
     if (traceStartup) {
       addFlag('trace-startup=true');
     }
@@ -379,17 +382,33 @@ class ELinuxDevice extends Device {
     if (debuggingOptions.traceSystrace) {
       addFlag('trace-systrace=true');
     }
+    if (debuggingOptions.traceToFile != null) {
+      addFlag('trace-to-file=${debuggingOptions.traceToFile}');
+    }
     if (debuggingOptions.endlessTraceBuffer) {
       addFlag('endless-trace-buffer=true');
     }
+    if (debuggingOptions.profileMicrotasks) {
+      addFlag('profile-microtasks=true');
+    }
     if (debuggingOptions.purgePersistentCache) {
       addFlag('purge-persistent-cache=true');
+    }
+    switch (debuggingOptions.enableImpeller) {
+      case ImpellerStatus.enabled:
+        addFlag('enable-impeller=true');
+      case ImpellerStatus.disabled:
+      case ImpellerStatus.platformDefault:
+        addFlag('enable-impeller=false');
+    }
+    if (debuggingOptions.enableFlutterGpu) {
+      addFlag('enable-flutter-gpu=true');
     }
     // Options only supported when there is a VM Service connection between the
     // tool and the device, usually in debug or profile mode.
     if (debuggingOptions.debuggingEnabled) {
       if (debuggingOptions.deviceVmServicePort != null) {
-        addFlag('observatory-port=${debuggingOptions.deviceVmServicePort}');
+        addFlag('vm-service-port=${debuggingOptions.deviceVmServicePort}');
       }
       if (debuggingOptions.buildInfo.isDebug) {
         addFlag('enable-checked-mode=true');
