@@ -57,6 +57,7 @@ abstract class ELinuxAssetBundle extends Target {
   @override
   List<Target> get dependencies => const <Target>[
         KernelSnapshot(),
+        InstallCodeAssets(),
       ];
 
   @override
@@ -403,6 +404,23 @@ class NativeBundle {
         environment.outputDir.childDirectory('flutter_assets'),
         flutterAssetsDir,
       );
+
+      // Copy NativeAssetsManifest.json so the engine can resolve @Native FFI symbols at runtime.
+      final File nativeAssetsFile = environment.buildDir.childFile('native_assets.json');
+      if (nativeAssetsFile.existsSync()) {
+        nativeAssetsFile.copySync(
+          flutterAssetsDir.childFile('NativeAssetsManifest.json').path,
+        );
+      }
+    }
+
+    // Copy native code assets from build hooks to the bundle's lib directory.
+    final DartHooksResult dartHookResult = await DartBuild.loadHookResult(environment);
+    for (final Uri assetUri in dartHookResult.filesToBeBundled) {
+      final File sourceFile = environment.fileSystem.file(assetUri);
+      if (sourceFile.existsSync()) {
+        sourceFile.copySync(outputBundleLibDir.childFile(sourceFile.basename).path);
+      }
     }
   }
 }
