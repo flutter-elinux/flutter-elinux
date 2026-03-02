@@ -56,7 +56,7 @@ $ sudo apt install unzip curl clang cmake pkg-config
 ```
 
 ### Run Flutter sample app on Wayland compositor
-You need to install a Wayland compositor such as [Sway](https://github.com/swaywm/sway) and [Weston](https://gitlab.freedesktop.org/wayland/weston/-/tree/master), and launch it before launching your Flutter apps. There are some known issues with Weston version 9. Therefore, we recomend using other compositors such as Sway.
+You need to install a Wayland compositor such as [Sway](https://github.com/swaywm/sway) and [Weston](https://gitlab.freedesktop.org/wayland/weston/-/tree/master), and launch it before launching your Flutter apps. There are some known issues with Weston version 9. Therefore, we recommend using other compositors such as Sway.
 
 ```Shell
 $ sudo apt install sway
