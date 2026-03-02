@@ -31,12 +31,13 @@ class ELinuxCreateCommand extends CreateCommand {
   ELinuxCreateCommand({super.verboseHelp});
 
   @override
-  void addPlatformsOptions({String? customHelp}) {
+  void addPlatformsOptions({String? customHelp, required Map<String, String> allowedHelp}) {
     argParser.addMultiOption(
       'platforms',
       help: customHelp,
       defaultsTo: _kAvailablePlatforms,
       allowed: _kAvailablePlatforms,
+      allowedHelp: allowedHelp,
     );
   }
 
