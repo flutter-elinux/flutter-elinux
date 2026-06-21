@@ -27,6 +27,18 @@ class ELinuxBuildCommand extends BuildCommand {
           verboseHelp: verboseHelp,
           androidSdk: globals.androidSdk,
           logger: globals.logger,
+          config: globals.config,
+          platform: globals.platform,
+          fileSystemUtils: globals.fsUtils,
+          terminal: globals.terminal,
+          plistParser: globals.plistParser,
+          processUtils: globals.processUtils,
+          processManager: globals.processManager,
+          templateRenderer: globals.templateRenderer,
+          xcode: globals.xcode,
+          artifacts: globals.artifacts!,
+          cache: globals.cache,
+          flutterVersion: globals.flutterVersion,
         ) {
     addSubcommand(BuildPackageCommand(verboseHelp: verboseHelp));
   }
