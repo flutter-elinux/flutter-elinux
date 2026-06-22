@@ -22,6 +22,7 @@ import 'package:flutter_tools/src/build_system/targets/icon_tree_shaker.dart';
 import 'package:flutter_tools/src/build_system/targets/native_assets.dart';
 import 'package:flutter_tools/src/cache.dart';
 import 'package:flutter_tools/src/cmake.dart';
+import 'package:flutter_tools/src/devfs.dart';
 import 'package:flutter_tools/src/globals.dart' as globals;
 import 'package:flutter_tools/src/isolated/native_assets/dart_hook_result.dart';
 import 'package:flutter_tools/src/project.dart';
@@ -56,7 +57,9 @@ abstract class ELinuxAssetBundle extends Target {
 
   @override
   List<Target> get dependencies => const <Target>[
+        DartBuildForNative(),
         KernelSnapshot(),
+        InstallCodeAssets(),
       ];
 
   @override
@@ -94,6 +97,11 @@ abstract class ELinuxAssetBundle extends Target {
       targetPlatform: tp,
       buildMode: buildMode,
       flavor: environment.defines[kFlavor],
+      additionalContent: <String, DevFSContent>{
+        'NativeAssetsManifest.json': DevFSFileContent(
+          environment.buildDir.childFile('native_assets.json'),
+        ),
+      },
     );
     final DepfileService depfileService = DepfileService(
       fileSystem: environment.fileSystem,
@@ -403,6 +411,16 @@ class NativeBundle {
         environment.outputDir.childDirectory('flutter_assets'),
         flutterAssetsDir,
       );
+    }
+
+    // Copy native code assets declared by build hooks (e.g. dynamically loaded
+    // shared libraries from `@Native` FFI bindings) into the bundle's lib
+    // directory. The list comes from `DartBuildForNative`, which runs
+    // transitively as a dependency of [ELinuxAssetBundle].
+    final DartHooksResult dartHookResult = await DartBuild.loadHookResult(environment);
+    for (final Uri assetUri in dartHookResult.filesToBeBundled) {
+      final File sourceFile = environment.fileSystem.file(assetUri);
+      sourceFile.copySync(outputBundleLibDir.childFile(sourceFile.basename).path);
     }
   }
 }
