@@ -21,12 +21,24 @@ import '../elinux_plugins.dart';
 class ELinuxBuildCommand extends BuildCommand {
   ELinuxBuildCommand({bool verboseHelp = false})
       : super(
-          fileSystem: globals.fs,
-          buildSystem: globals.buildSystem,
-          osUtils: globals.os,
-          verboseHelp: verboseHelp,
           androidSdk: globals.androidSdk,
+          artifacts: globals.artifacts!,
+          buildSystem: globals.buildSystem,
+          cache: globals.cache,
+          config: globals.config,
+          fileSystem: globals.fs,
+          fileSystemUtils: globals.fsUtils,
+          flutterVersion: globals.flutterVersion,
           logger: globals.logger,
+          osUtils: globals.os,
+          platform: globals.platform,
+          plistParser: globals.plistParser,
+          processManager: globals.processManager,
+          processUtils: globals.processUtils,
+          templateRenderer: globals.templateRenderer,
+          terminal: globals.terminal,
+          verboseHelp: verboseHelp,
+          xcode: globals.xcode,
         ) {
     addSubcommand(BuildPackageCommand(verboseHelp: verboseHelp));
   }
