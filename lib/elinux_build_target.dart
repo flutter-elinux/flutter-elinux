@@ -44,6 +44,7 @@ abstract class ELinuxAssetBundle extends Target {
   @override
   List<Source> get inputs => const <Source>[
         Source.pattern('{BUILD_DIR}/app.dill'),
+        Source.pattern('{BUILD_DIR}/${LinkHooks.resultFilename}'),
         ...IconTreeShaker.inputs,
       ];
 
@@ -57,7 +58,7 @@ abstract class ELinuxAssetBundle extends Target {
 
   @override
   List<Target> get dependencies => const <Target>[
-        DartBuildForNative(),
+        LinkHooks(),
         KernelSnapshot(),
         InstallCodeAssets(),
       ];
@@ -89,7 +90,7 @@ abstract class ELinuxAssetBundle extends Target {
     }
     final TargetPlatform tp =
         buildInfo.targetArch == 'arm64' ? TargetPlatform.linux_arm64 : TargetPlatform.linux_x64;
-    final DartHooksResult dartHookResult = await DartBuild.loadHookResult(environment);
+    final DartHooksResult dartHookResult = await LinkHooks.loadHookResult(environment);
     final Depfile assetDepfile = await copyAssets(
       environment,
       outputDirectory,
@@ -415,9 +416,9 @@ class NativeBundle {
 
     // Copy native code assets declared by build hooks (e.g. dynamically loaded
     // shared libraries from `@Native` FFI bindings) into the bundle's lib
-    // directory. The list comes from `DartBuildForNative`, which runs
-    // transitively as a dependency of [ELinuxAssetBundle].
-    final DartHooksResult dartHookResult = await DartBuild.loadHookResult(environment);
+    // directory. The list comes from `LinkHooks`, which runs transitively as a
+    // dependency of [ELinuxAssetBundle].
+    final DartHooksResult dartHookResult = await LinkHooks.loadHookResult(environment);
     for (final Uri assetUri in dartHookResult.filesToBeBundled) {
       final File sourceFile = environment.fileSystem.file(assetUri);
       sourceFile.copySync(outputBundleLibDir.childFile(sourceFile.basename).path);

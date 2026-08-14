@@ -28,6 +28,6 @@ class ELinuxAnalyzeCommand extends AnalyzeCommand with ELinuxExtension {
               git: globals.git,
             ),
           ],
-          suppressAnalytics: globals.flutterUsage.suppressAnalytics,
+          suppressAnalytics: !globals.analytics.okToSend,
         );
 }
