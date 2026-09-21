@@ -159,11 +159,11 @@ Future<String> _createEntrypoint(FlutterProject project, String targetFile) asyn
   if (!eLinuxProject.existsSync()) {
     return targetFile;
   }
-
   final File entrypoint = eLinuxProject.managedDirectory.childFile('main.dart')
     ..createSync(recursive: true);
+  final File packageConfigFile = findPackageConfigFileOrDefault(project.directory);
   final PackageConfig packageConfig = await loadPackageConfigWithLogging(
-    project.directory.childFile('.packages'),
+    packageConfigFile,
     logger: globals.logger,
   );
   final FlutterProject flutterProject = FlutterProject.current();
@@ -382,9 +382,9 @@ Future<List<ELinuxPlugin>> findELinuxPlugins(
   bool throwOnError = true,
 }) async {
   final List<ELinuxPlugin> plugins = <ELinuxPlugin>[];
-  final File packagesFile = project.directory.childFile('.packages');
+  final File packageConfigFile = findPackageConfigFileOrDefault(project.directory);
   final PackageConfig packageConfig = await loadPackageConfigWithLogging(
-    packagesFile,
+    packageConfigFile,
     logger: globals.logger,
     throwOnError: throwOnError,
   );
