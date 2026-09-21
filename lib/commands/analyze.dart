@@ -25,8 +25,9 @@ class ELinuxAnalyzeCommand extends AnalyzeCommand with ELinuxExtension {
               logger: globals.logger,
               fileSystem: globals.fs,
               platform: globals.platform,
+              git: globals.git,
             ),
           ],
-          suppressAnalytics: globals.flutterUsage.suppressAnalytics,
+          suppressAnalytics: !globals.analytics.okToSend,
         );
 }

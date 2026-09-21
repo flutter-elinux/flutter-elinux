@@ -100,7 +100,7 @@ class ELinuxEngineArtifacts extends EngineCachedArtifact {
   String get engineBaseUrl {
     final String? overrideUrl = _platform.environment['ELINUX_ENGINE_BASE_URL'];
     if (overrideUrl == null) {
-      return 'https://github.com/sony/flutter-embedded-linux/releases';
+      return 'https://github.com/flutter-elinux/flutter-embedded-linux/releases';
     }
     try {
       Uri.parse(overrideUrl);

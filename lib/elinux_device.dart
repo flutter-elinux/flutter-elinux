@@ -28,7 +28,7 @@ import 'vscode_helper.dart';
 
 /// eLinux device implementation.
 ///
-/// See: [DesktopDevice] in `desktop_device.dart`
+/// See: [DesktopDevice] in flutter `packages/flutter_tools/lib/src/desktop_device.dart`
 class ELinuxDevice extends Device {
   ELinuxDevice(
     super.id, {
@@ -166,14 +166,14 @@ class ELinuxDevice extends Device {
 
       _logReader.initializeProcess(process);
 
-      final Uri? observatoryUri = await discovery.uri;
+      final Uri? vmServiceUri = await discovery.uri;
       await discovery.cancel();
 
       if (_config.usesPortForwarding) {
-        _forwardedHostPort = observatoryUri!.port;
+        _forwardedHostPort = vmServiceUri!.port;
       }
 
-      return LaunchResult.succeeded(observatoryUri: observatoryUri);
+      return LaunchResult.succeeded(vmServiceUri: vmServiceUri);
     }
 
     // Target is desktop hosts from here.
@@ -221,7 +221,7 @@ class ELinuxDevice extends Device {
     if (debuggingOptions.buildInfo.isRelease) {
       return LaunchResult.succeeded();
     }
-    final ProtocolDiscovery observatoryDiscovery = ProtocolDiscovery.vmService(
+    final ProtocolDiscovery vmServiceDiscovery = ProtocolDiscovery.vmService(
       _logReader,
       devicePort: debuggingOptions.deviceVmServicePort,
       hostPort: debuggingOptions.hostVmServicePort,
@@ -229,15 +229,15 @@ class ELinuxDevice extends Device {
       logger: _logger,
     );
     try {
-      final Uri? observatoryUri = await observatoryDiscovery.uri;
-      if (observatoryUri != null) {
+      final Uri? vmServiceUri = await vmServiceDiscovery.uri;
+      if (vmServiceUri != null) {
         onAttached(package, buildMode, process);
 
         if (!prebuiltApplication) {
-          updateLaunchJsonFile(FlutterProject.current(), observatoryUri);
+          updateLaunchJsonFile(FlutterProject.current(), vmServiceUri);
         }
 
-        return LaunchResult.succeeded(observatoryUri: observatoryUri);
+        return LaunchResult.succeeded(vmServiceUri: vmServiceUri);
       }
       _logger.printError(
         'Error waiting for a debug connection: '
@@ -246,7 +246,7 @@ class ELinuxDevice extends Device {
     } on Exception catch (error) {
       _logger.printError('Error waiting for a debug connection: $error');
     } finally {
-      await observatoryDiscovery.cancel();
+      await vmServiceDiscovery.cancel();
     }
     return LaunchResult.failed();
   }
@@ -292,7 +292,7 @@ class ELinuxDevice extends Device {
   final DevicePortForwarder portForwarder;
 
   @override
-  bool isSupported() => true;
+  Future<bool> isSupported() async => true;
 
   @override
   bool get supportsScreenshot => false;
@@ -355,6 +355,9 @@ class ELinuxDevice extends Device {
 
     addFlag('enable-dart-profiling=true');
 
+    if (debuggingOptions.profileStartup) {
+      addFlag('profile-startup=true');
+    }
     if (traceStartup) {
       addFlag('trace-startup=true');
     }
@@ -379,23 +382,33 @@ class ELinuxDevice extends Device {
     if (debuggingOptions.traceSystrace) {
       addFlag('trace-systrace=true');
     }
+    if (debuggingOptions.traceToFile != null) {
+      addFlag('trace-to-file=${debuggingOptions.traceToFile}');
+    }
     if (debuggingOptions.endlessTraceBuffer) {
       addFlag('endless-trace-buffer=true');
     }
-    if (debuggingOptions.dumpSkpOnShaderCompilation) {
-      addFlag('dump-skp-on-shader-compilation=true');
-    }
-    if (debuggingOptions.cacheSkSL) {
-      addFlag('cache-sksl=true');
+    if (debuggingOptions.profileMicrotasks) {
+      addFlag('profile-microtasks=true');
     }
     if (debuggingOptions.purgePersistentCache) {
       addFlag('purge-persistent-cache=true');
+    }
+    switch (debuggingOptions.enableImpeller) {
+      case ImpellerStatus.enabled:
+        addFlag('enable-impeller=true');
+      case ImpellerStatus.disabled:
+      case ImpellerStatus.platformDefault:
+        addFlag('enable-impeller=false');
+    }
+    if (debuggingOptions.enableFlutterGpu) {
+      addFlag('enable-flutter-gpu=true');
     }
     // Options only supported when there is a VM Service connection between the
     // tool and the device, usually in debug or profile mode.
     if (debuggingOptions.debuggingEnabled) {
       if (debuggingOptions.deviceVmServicePort != null) {
-        addFlag('observatory-port=${debuggingOptions.deviceVmServicePort}');
+        addFlag('vm-service-port=${debuggingOptions.deviceVmServicePort}');
       }
       if (debuggingOptions.buildInfo.isDebug) {
         addFlag('enable-checked-mode=true');
@@ -407,7 +420,7 @@ class ELinuxDevice extends Device {
       if (debuggingOptions.disableServiceAuthCodes) {
         addFlag('disable-service-auth-codes=true');
       }
-      final String dartVmFlags = computeDartVmFlags(debuggingOptions);
+      final String dartVmFlags = debuggingOptions.dartFlags;
       if (dartVmFlags.isNotEmpty) {
         addFlag('dart-flags=$dartVmFlags');
       }
